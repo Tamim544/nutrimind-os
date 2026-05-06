@@ -1,7 +1,7 @@
 // NutriMind v3 - Frontend API Client
 // Connects to the Google ADK Python Backend (Vertex AI Agent Engine)
 
-const API_BASE = import.meta.env.DEV ? 'http://localhost:8000/api' : 'https://nutrimind-os-266798210763.europe-west1.run.app/api';
+const API_BASE = import.meta.env.DEV ? 'http://localhost:8000/api' : 'https://nutrimind-os010-266798210763.europe-west1.run.app/api';
 
 class ADKFrontendClient {
   isConfigured() {
