@@ -1,85 +1,61 @@
-# NutriMind OS 🧠
+# NutriMind OS v3 🧠
 
-> **We are not tracking food. We are understanding human eating behavior using AI.**
+> **We are not tracking food. We are understanding human eating behavior using Google ADK.**
 
-NutriMind OS is a **Predictive Behavioral Nutrition Operating System**. Instead of acting as a passive calorie counter, it utilizes a sophisticated **Multi-Agent AI Architecture** powered by Google Gemini to predict *why* users eat poorly and prevent unhealthy choices before they happen.
+NutriMind OS is a **Predictive Behavioral Nutrition Operating System** built specifically for the **Build with AI 2026 Hackathon**. We have moved beyond generic API calls to build a true multi-agent system using the **Google Agent Development Kit (ADK)** deployed on **Vertex AI Agent Engine**.
 
-Built for the **AMD Slingshot Hackathon 2025**.
+## 🚀 The ADK Architecture
 
-![NutriMind OS UI Screenshot](https://raw.githubusercontent.com/tamimchowdhury/nutrimind-ai/main/docs/ui-preview.png) *(Note: Add screenshot to docs folder)*
+Our backend is powered by a Python-based ADK pipeline orchestrating 5 specialized agents via **A2A (Agent-to-Agent) Protocol**:
 
-## 🏆 Key Differentiators
+*   **NutriMindOrchestrator** (RootAgent): Routes requests and maintains session state.
+*   **VisionAgent** (Gemini 3 Flash): Uses native multimodal capabilities to analyze live food streams. Delegates data to NutritionAgent.
+*   **NutritionAgent** (Gemini 3 Pro): Uses **Vertex AI Code Execution Sandbox** to compute precise diet math instead of hardcoded formulas.
+*   **BehaviorAgent** (Gemini 3 Pro): Uses **Managed MCP** to pull Google Fit data and detect emotional eating patterns. 
+*   **CoachAgent** (Gemini 3 Pro): Native audio understanding and utilizes **ADK Session Rewind** for "diet experiments".
 
-*   **Multi-Agent Architecture**: Inputs are orchestrated to 5 specialized Gemini AI agents (Vision, Nutrition, Behavior, Recommendation, Grocery).
-*   **Predictive Craving Engine**: Anticipates sugar cravings or stress eating based on time-of-day and behavioral logs.
-*   **Smart Exam Mode**: A campus-focused feature that shifts AI logic to prioritize cognitive performance, brain food, and sustained energy during finals week.
-*   **Digital Twin Projection**: Simulates a 30-day health consequence narrative based on current emotional eating patterns.
+## 🔷 Ultimate Google Tech Stack
 
-## 🔷 Google AI Stack
+We heavily utilize the modern 2026 Google ecosystem:
 
-This project deeply integrates **8 distinct Google Services**:
+1.  **Google ADK (Agent Development Kit)**: Core Python framework.
+2.  **Gemini 3 Pro & Flash**: Reasoning and multimodal agents.
+3.  **Vertex AI Agent Engine Runtime**: Serverless deployment target for our ADK pipeline.
+4.  **Google Managed MCP Servers**: Pre-built connections to Firestore and Google Fit without custom code.
+5.  **Antigravity IDE**: The entire application was built using agentic vibe coding.
 
-1.  **Gemini API**: Central reasoning engine powering the Multi-Agent Architecture.
-2.  **Firebase**: Firestore (context storage), Cloud Functions (orchestrator), Auth, and Analytics.
-3.  **ML Kit**: On-device, offline-capable image labeling and barcode scanning.
-4.  **Google Maps API**: Context-aware restaurant recommendations based on health goals.
-5.  **Google Fit API**: Sleep and activity data fed into the Context Engine.
-6.  **Speech-to-Text API**: Frictionless voice nutrition logging for high accessibility.
-7.  **Vertex AI**: Enterprise-scale deployment layer.
-8.  **Firebase Analytics**: Detects stress usage patterns to feed the Behavior Agent.
+## 🌟 Wow-Factor Features
 
-## 🚀 13 Core Features
-
-1.  AI Camera Meal Scanner
-2.  Predictive Craving Engine
-3.  Nutrition Agent (AI-first UI)
-4.  Digital Twin Consequence Simulator
-5.  **Smart Exam Mode**
-6.  **Emotional Eating Detection**
-7.  Voice Nutrition Logging
-8.  AI Grocery Scanner
-9.  Smart Restaurant Finder
-10. Health Storytelling Dashboard
-11. AI Habit Score
-12. South Asian Food Intelligence
-13. Offline ML Emergency Mode
-
-## 🏗️ System Flow
-
-1.  **User Input**: Voice, Camera, Text, or Sensor data (Fit API).
-2.  **Agent Orchestrator**: Routes input to the correct specialized Gemini Agent.
-3.  **Context Engine**: Enriches the prompt with active states (e.g., Exam Mode, Sleep debt).
-4.  **Gemini Reasoning Layer**: Generates highly specialized, structured JSON insights.
-5.  **Behavior Engine**: Learns async from user patterns via Firebase Analytics.
-6.  **Personalized Output**: Delivers contextual coaching and UI updates.
+*   **ADK Session Rewind**: "Rewind my nutrition to before I drank the soda."
+*   **HITL (Human-in-the-loop) Tool Confirmation**: The AI pauses and asks permission before logging severe stress eating events to your health record.
+*   **Gemini 3 Live Food Stream**: Real-time video analysis of your plate.
+*   **Code Execution Sandbox**: Dynamic calorie computation.
+*   **Google Agentspace Integration**: B2B scalability.
 
 ## 💻 Tech Stack
 
-*   **Frontend**: React + Vite + Vanilla CSS
-*   **Styling**: Premium Dark Mode, Glassmorphism, Micro-animations
-*   **AI SDK**: `@google/generative-ai`
-*   **Deployment Target**: Firebase Hosting
+*   **Backend**: Python, Google ADK, FastAPI
+*   **Frontend**: React + Vite (Flutter alternative)
+*   **Deployment**: Vertex AI Agent Engine + Firebase Hosting
 
 ## 🛠️ Local Setup
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/nutrimind-ai.git
-   cd nutrimind-ai
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Set up environment variables:
-   Create a `.env` file in the root directory and add your Gemini API Key:
-   ```env
-   VITE_GEMINI_API_KEY=your_google_gemini_api_key
-   ```
-4. Run the development server:
-   ```bash
-   npm run dev
-   ```
+### 1. Run the ADK Backend (Python)
+```bash
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python3 main.py
+```
+*(Runs on `http://localhost:8000`)*
+
+### 2. Run the Frontend (React)
+```bash
+npm install
+npm run dev
+```
+*(Runs on `http://localhost:5180`)*
 
 ## 📜 License
 MIT License
