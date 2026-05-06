@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
-import { Send, Mic, MicOff, Sparkles, Bot, User, BookOpen } from 'lucide-react';
+import React, { useState, useRef, useEffect, memo } from 'react';
+import { Send, Mic, MicOff, Sparkles, Bot, User, BookOpen, X } from 'lucide-react';
 import { orchestrator } from '../services/gemini';
 
-export default function CoachPage({ userContext }) {
+const CoachPage = memo(({ userContext, onNavigate }) => {
   const [messages, setMessages] = useState([
     { role: 'ai', content: "Hello! I am your Nutrition Agent — the core of your NutriMind OS.\n\nI understand your behaviors and optimize your nutrition proactively. Ask me anything." },
   ]);
@@ -103,7 +103,7 @@ export default function CoachPage({ userContext }) {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - var(--nav-height) - 40px)' }}>
+    <main role="main" aria-label="Chat Interface" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - var(--nav-height) - 40px)' }}>
       {/* Header */}
       <div style={{ marginBottom: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -120,6 +120,7 @@ export default function CoachPage({ userContext }) {
               <p className="text-small">Your AI-first behavioral interface</p>
             </div>
           </div>
+          {onNavigate && <button aria-label="Close Chat" onClick={() => onNavigate('home')}><X size={20} /></button>}
           {userContext.examMode && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(59, 130, 246, 0.15)', padding: '4px 8px', borderRadius: 8 }}>
               <BookOpen size={14} color="var(--accent-blue)" />
@@ -130,7 +131,7 @@ export default function CoachPage({ userContext }) {
       </div>
 
       {/* Messages */}
-      <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 8 }}>
+      <div aria-live="polite" style={{ flex: 1, overflowY: 'auto', paddingBottom: 8 }}>
         {messages.map((msg, i) => (
           <div key={i} style={{
             display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
@@ -229,6 +230,8 @@ export default function CoachPage({ userContext }) {
           <Send size={18} />
         </button>
       </div>
-    </div>
+    </main>
   );
-}
+});
+
+export default CoachPage;

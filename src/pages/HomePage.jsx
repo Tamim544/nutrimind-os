@@ -1,3 +1,4 @@
+import React, { memo } from 'react';
 import { Brain, Camera, Mic, TrendingUp, Sparkles, ChevronRight, Activity, Droplets, Moon, Flame, Clock, BookOpen, AlertCircle } from 'lucide-react';
 
 const HABIT_AXES = [
@@ -15,15 +16,15 @@ const QUICK_ACTIONS = [
   { label: 'Insights', icon: TrendingUp, tab: 'insights', gradient: 'linear-gradient(135deg, #8b5cf6, #ec4899)' },
 ];
 
-export default function HomePage({ onNavigate, userContext, toggleExamMode }) {
+function HomePage({ onNavigate, userContext, toggleExamMode }) {
   const now = new Date();
   const hour = now.getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
   return (
-    <div className="stagger">
+    <main className="stagger" role="main" aria-label="NutriMind Dashboard">
       {/* Hero Section */}
-      <div style={{ marginBottom: 20 }}>
+      <header style={{ marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div className="animate-breathe" style={{
@@ -39,10 +40,10 @@ export default function HomePage({ onNavigate, userContext, toggleExamMode }) {
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* v2: EXAM MODE TOGGLE */}
-      <div className="glass-card" style={{ 
+      <section className="glass-card" aria-label="Exam Mode Toggle" style={{ 
         marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         background: userContext.examMode ? 'rgba(59, 130, 246, 0.1)' : 'var(--bg-glass)',
         border: userContext.examMode ? '1px solid var(--accent-blue)' : '1px solid var(--border-subtle)',
@@ -63,10 +64,11 @@ export default function HomePage({ onNavigate, userContext, toggleExamMode }) {
         </div>
         
         {/* Toggle Switch */}
-        <div 
+        <button 
+          aria-label="Toggle exam mode"
           onClick={toggleExamMode}
           style={{
-            width: 44, height: 24, borderRadius: 12, cursor: 'pointer',
+            width: 44, height: 24, borderRadius: 12, cursor: 'pointer', border: 'none',
             background: userContext.examMode ? 'var(--accent-blue)' : 'var(--bg-secondary)',
             position: 'relative', transition: 'all 0.3s'
           }}
@@ -76,11 +78,11 @@ export default function HomePage({ onNavigate, userContext, toggleExamMode }) {
             position: 'absolute', top: 2, left: userContext.examMode ? 22 : 2,
             transition: 'all 0.3s', boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
           }} />
-        </div>
-      </div>
+        </button>
+      </section>
 
       {/* AI Habit Score Card */}
-      <div className="glass-card" style={{ marginBottom: 16, position: 'relative', overflow: 'hidden' }}>
+      <section className="glass-card" aria-label="Health Score" style={{ marginBottom: 16, position: 'relative', overflow: 'hidden' }}>
         <div style={{
           position: 'absolute', top: -40, right: -40, width: 120, height: 120,
           background: 'radial-gradient(circle, var(--accent-green-glow), transparent)',
@@ -120,69 +122,75 @@ export default function HomePage({ onNavigate, userContext, toggleExamMode }) {
             );
           })}
         </div>
-      </div>
+      </section>
 
       {/* v2: EMOTIONAL EATING DETECTION */}
-      <div className="glass-card" style={{ marginBottom: 16, borderLeft: '3px solid var(--accent-purple)' }}>
+      <section className="glass-card" aria-label="Alerts" style={{ marginBottom: 16, borderLeft: '3px solid var(--accent-purple)' }}>
         <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
           <AlertCircle size={18} color="var(--accent-purple)" style={{ flexShrink: 0, marginTop: 2 }} />
           <div>
             <p className="heading-sm" style={{ marginBottom: 4, color: 'var(--accent-purple)' }}>Emotional Eating Detected</p>
             <p className="text-body" style={{ fontSize: 13 }}>You've ordered late-night food 3 times this week. This strongly correlates with your stress patterns in the evening. Let's talk about it.</p>
-            <button className="btn btn-ghost" style={{ marginTop: 8, color: 'var(--accent-purple)', padding: '4px 0', fontSize: 13 }}
+            <button className="btn btn-ghost" style={{ marginTop: 8, color: 'var(--accent-purple)', padding: '4px 0', fontSize: 13, border: 'none', background: 'transparent', cursor: 'pointer' }}
               onClick={() => onNavigate('coach')}>
               Talk to AI Coach <ChevronRight size={14} />
             </button>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Quick Actions Grid */}
-      <p className="section-label">Quick Actions</p>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
-        {QUICK_ACTIONS.map((action) => {
-          const Icon = action.icon;
-          return (
-            <button key={action.label} className="glass-card" onClick={() => onNavigate(action.tab)}
-              style={{ cursor: 'pointer', textAlign: 'center', padding: 16, border: 'none', background: 'var(--bg-glass)' }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: 12, background: action.gradient,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                margin: '0 auto 8px',
-              }}>
-                <Icon size={22} color="white" />
-              </div>
-              <span className="heading-sm" style={{ color: 'var(--text-primary)' }}>{action.label}</span>
-            </button>
-          );
-        })}
-      </div>
+      <nav aria-label="Quick Actions">
+        <p className="section-label">Quick Actions</p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
+          {QUICK_ACTIONS.map((action) => {
+            const Icon = action.icon;
+            return (
+              <button key={action.label} className="glass-card" onClick={() => onNavigate(action.tab)}
+                style={{ cursor: 'pointer', textAlign: 'center', padding: 16, border: 'none', background: 'var(--bg-glass)' }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: 12, background: action.gradient,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  margin: '0 auto 8px',
+                }}>
+                  <Icon size={22} color="white" />
+                </div>
+                <span className="heading-sm" style={{ color: 'var(--text-primary)' }}>{action.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
 
       {/* Recent Meals */}
-      <p className="section-label">Recent Meals</p>
-      <div className="glass-card-static" style={{ marginBottom: 16 }}>
-        {[
-          { time: '8:30 AM', meal: 'Eggs + Paratha', cal: 416, score: 74 },
-          { time: '1:15 PM', meal: 'Dal + Brown Rice + Salad', cal: 520, score: 85 },
-        ].map((m, i) => (
-          <div key={i} style={{
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            padding: '10px 0', borderBottom: i === 0 ? '1px solid var(--border-subtle)' : 'none',
-          }}>
-            <div>
-              <p className="heading-sm">{m.meal}</p>
-              <p className="text-small">{m.time} · {m.cal} cal</p>
-            </div>
-            <div style={{
-              padding: '4px 10px', borderRadius: 'var(--radius-full)', fontSize: 12, fontWeight: 600,
-              background: m.score >= 80 ? 'rgba(16,185,129,0.12)' : 'rgba(245,158,11,0.12)',
-              color: m.score >= 80 ? 'var(--accent-green)' : 'var(--accent-orange)',
+      <section aria-label="Recent Meals">
+        <p className="section-label">Recent Meals</p>
+        <div className="glass-card-static" style={{ marginBottom: 16 }}>
+          {[
+            { time: '8:30 AM', meal: 'Eggs + Paratha', cal: 416, score: 74 },
+            { time: '1:15 PM', meal: 'Dal + Brown Rice + Salad', cal: 520, score: 85 },
+          ].map((m, i) => (
+            <div key={i} style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              padding: '10px 0', borderBottom: i === 0 ? '1px solid var(--border-subtle)' : 'none',
             }}>
-              {m.score}/100
+              <div>
+                <p className="heading-sm">{m.meal}</p>
+                <p className="text-small">{m.time} · {m.cal} cal</p>
+              </div>
+              <div style={{
+                padding: '4px 10px', borderRadius: 'var(--radius-full)', fontSize: 12, fontWeight: 600,
+                background: m.score >= 80 ? 'rgba(16,185,129,0.12)' : 'rgba(245,158,11,0.12)',
+                color: m.score >= 80 ? 'var(--accent-green)' : 'var(--accent-orange)',
+              }}>
+                {m.score}/100
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-    </div>
+          ))}
+        </div>
+      </section>
+    </main>
   );
 }
+
+export default memo(HomePage);

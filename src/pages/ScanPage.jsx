@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef, memo } from 'react';
 import { Camera, Upload, Loader2, AlertTriangle, CheckCircle, Zap, Clock, ArrowRight, X } from 'lucide-react';
 import { orchestrator } from '../services/gemini';
 
-export default function ScanPage({ userContext }) {
+function ScanPage({ userContext, onNavigate }) {
   const [image, setImage] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
@@ -30,16 +30,24 @@ export default function ScanPage({ userContext }) {
   const scoreColor = (s) => s >= 80 ? 'var(--accent-green)' : s >= 50 ? 'var(--accent-orange)' : 'var(--accent-red)';
 
   return (
-    <div className="stagger">
-      <h2 className="heading-lg" style={{ marginBottom: 4 }}>Vision Agent Scanner</h2>
-      <p className="text-body" style={{ marginBottom: 20 }}>Powered by Gemini Vision + ML Kit</p>
-
+    <main className="stagger" role="main" aria-label="Camera Scanner">
+      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+        <h2 className="heading-lg" style={{ marginBottom: 4 }}>Vision Agent Scanner</h2>
+        <button aria-label="Close scanner" onClick={() => onNavigate?.('home')} className="btn btn-icon"><X size={20} /></button>
+      </header>
+      
       {!image ? (
         /* Upload Area */
-        <div onClick={() => fileRef.current?.click()} className="glass-card" style={{
-          textAlign: 'center', padding: '48px 20px', cursor: 'pointer',
-          border: '2px dashed var(--border-medium)', position: 'relative', overflow: 'hidden',
-        }}>
+        <div 
+          role="button" 
+          aria-label="Upload food image" 
+          onClick={() => fileRef.current?.click()} 
+          className="glass-card" 
+          style={{
+            textAlign: 'center', padding: '48px 20px', cursor: 'pointer',
+            border: '2px dashed var(--border-medium)', position: 'relative', overflow: 'hidden',
+          }}
+        >
           <div style={{
             position: 'absolute', inset: 0,
             background: 'radial-gradient(circle at center, var(--accent-green-glow), transparent 70%)',
@@ -66,7 +74,7 @@ export default function ScanPage({ userContext }) {
           <div style={{ position: 'relative', borderRadius: 'var(--radius-lg)', overflow: 'hidden', marginBottom: 16 }}>
             <img src={image} alt="Meal" style={{ width: '100%', borderRadius: 'var(--radius-lg)', display: 'block' }} />
             {analyzing && <div className="scan-overlay" />}
-            <button onClick={reset} style={{
+            <button aria-label="Clear image" onClick={reset} style={{
               position: 'absolute', top: 8, right: 8, width: 32, height: 32, borderRadius: '50%',
               background: 'rgba(0,0,0,0.6)', border: 'none', color: 'white', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -76,15 +84,15 @@ export default function ScanPage({ userContext }) {
           </div>
 
           {analyzing && (
-            <div className="glass-card" style={{ textAlign: 'center', padding: 32 }}>
+            <section aria-live="polite" className="glass-card" style={{ textAlign: 'center', padding: 32 }}>
               <Loader2 size={32} color="var(--accent-green)" className="animate-pulse" style={{ margin: '0 auto 12px', animation: 'spin 1s linear infinite' }} />
               <p className="heading-sm">Vision Agent Analyzing...</p>
               <p className="text-small">Identifying foods, estimating macros, scoring health</p>
-            </div>
+            </section>
           )}
 
           {result && (
-            <div className="stagger">
+            <section aria-live="polite" aria-label="Analysis Results" className="stagger">
               {/* Health Score */}
               <div className="glass-card" style={{ textAlign: 'center', marginBottom: 12, position: 'relative', overflow: 'hidden' }}>
                 <div style={{
@@ -174,10 +182,12 @@ export default function ScanPage({ userContext }) {
                 <p className="section-label" style={{ color: 'var(--accent-purple)' }}>🧠 Behavior Agent Insight</p>
                 <p className="text-body">{result.aiInsight}</p>
               </div>
-            </div>
+            </section>
           )}
         </div>
       )}
-    </div>
+    </main>
   );
 }
+
+export default memo(ScanPage);

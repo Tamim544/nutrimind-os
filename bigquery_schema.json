@@ -1,0 +1,22 @@
+[
+  {
+    "name": "timestamp",
+    "type": "TIMESTAMP",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "user_id",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "emotional_eating_score",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "exam_mode_active",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  }
+]

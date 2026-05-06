@@ -1,12 +1,21 @@
-from fastapi import FastAPI, UploadFile, File, Form, Body
+from fastapi import FastAPI, UploadFile, File, Form, Body, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Dict, Any, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import os
 import json
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from functools import lru_cache
+
+# Setup Rate Limiting for Security
+limiter = Limiter(key_func=get_remote_address)
 
 # Setup FastAPI
 app = FastAPI(title="NutriMind OS - ADK Backend")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Enable CORS for Vite frontend
 app.add_middleware(
@@ -17,8 +26,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Secure Security Headers
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Content-Security-Policy"] = "default-src 'self'"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return response
+
 @app.get("/")
-def read_root():
+@limiter.limit("100/minute")
+def read_root(request: Request):
     return {
         "status": "online",
         "service": "NutriMind OS ADK Agent Engine",
@@ -29,11 +50,11 @@ class UserContext(BaseModel):
     examMode: bool = False
     
 class ChatMessage(BaseModel):
-    role: str
-    content: str
+    role: str = Field(..., max_length=50)
+    content: str = Field(..., max_length=2000)
 
 class ChatRequest(BaseModel):
-    message: str
+    message: str = Field(..., min_length=1, max_length=1000)
     history: List[ChatMessage]
     context: UserContext
 
@@ -144,7 +165,8 @@ async def scan_meal(
     return result
 
 @app.post("/api/chat")
-async def chat_with_coach(req: ChatRequest):
+@limiter.limit("20/minute")
+async def chat_with_coach(request: Request, req: ChatRequest):
     """
     Handles CoachAgent requests with session context.
     """
@@ -153,7 +175,8 @@ async def chat_with_coach(req: ChatRequest):
     return {"response": response_text}
 
 @app.post("/api/insights")
-async def get_insights(context: UserContext = Body(...)):
+@limiter.limit("10/minute")
+async def get_insights(request: Request, context: UserContext = Body(...)):
     """
     Handles BehaviorAgent Digital Twin generation.
     """
