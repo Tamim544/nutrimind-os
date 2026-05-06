@@ -17,6 +17,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def read_root():
+    return {
+        "status": "online",
+        "service": "NutriMind OS ADK Agent Engine",
+        "version": "v3"
+    }
+
 class UserContext(BaseModel):
     examMode: bool = False
     
