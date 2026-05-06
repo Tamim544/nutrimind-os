@@ -13,5 +13,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Expose port 8080 (Cloud Run / Vertex AI Agent Engine requirement)
 EXPOSE 8080
 
-# Run the FastAPI server via Uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Run the FastAPI server via Uvicorn using the PORT environment variable
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}"]
