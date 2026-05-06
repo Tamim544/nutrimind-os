@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "coastal-cell-495509-b7",
+    "site": "nutrind-ai",
     "public": "dist",
     "ignore": [
       "firebase.json",
