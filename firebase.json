@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "coastal-cell-495509-b7",
     "public": "dist",
     "ignore": [
       "firebase.json",
