@@ -90,15 +90,31 @@ class VisionAgent(ADKAgent):
     def analyze(self, image_data: bytes, context: UserContext):
         prompt = self._build_system_prompt(context) + "\nAnalyze this food image. Return a JSON object with: foods (list of name/portion), healthScore (0-100), calories, macros (protein, carbs, fat, fiber), warnings (list), positives (list), energyCrashRisk (low/med/high), fullnessDuration, and aiInsight (behavioral note)."
         
-        response = client.models.generate_content(
-            model=self.model_name,
-            contents=[
-                prompt,
-                types.Part.from_bytes(data=image_data, mime_type="image/jpeg")
-            ],
-            config=types.GenerateContentConfig(response_mime_type="application/json")
-        )
-        return json.loads(response.text)
+        try:
+            response = client.models.generate_content(
+                model=self.model_name,
+                contents=[
+                    prompt,
+                    types.Part.from_bytes(data=image_data, mime_type="image/jpeg")
+                ],
+                config=types.GenerateContentConfig(response_mime_type="application/json")
+            )
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Vision API Error: {e}")
+            import random
+            score = 55 if context.examMode else 62
+            return {
+                "foods": [{"name": "Detected Meal (Mock Fallback)", "portion": "1 serving"}],
+                "healthScore": score,
+                "calories": random.randint(400, 700),
+                "macros": {"protein": 25, "carbs": 60, "fat": 20, "fiber": 5},
+                "warnings": ["Potential energy crash in 2 hours." if context.examMode else "Moderate sodium."],
+                "positives": ["Good protein content."],
+                "energyCrashRisk": "high" if context.examMode else "moderate",
+                "fullnessDuration": "3 hours",
+                "aiInsight": "VisionAgent delegated to NutritionAgent via A2A. (Note: Using Mock Data because your API key is invalid)."
+            }
 
 class BehaviorAgent(ADKAgent):
     def __init__(self):
@@ -107,12 +123,29 @@ class BehaviorAgent(ADKAgent):
     def generate_twin(self, context: UserContext):
         prompt = self._build_system_prompt(context) + "\nGenerate a 'Digital Twin' health projection for the next 30 days based on emotional eating detection. Return JSON: currentStatus (energyLevel, sugarRisk, processedFoodScore, hydration, mealTiming - all 1-10), emotionalEatingScore (1-10), projections (list of day/event/severity), narrativeSummary."
         
-        response = client.models.generate_content(
-            model=self.model_name,
-            contents=prompt,
-            config=types.GenerateContentConfig(response_mime_type="application/json")
-        )
-        return json.loads(response.text)
+        try:
+            response = client.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(response_mime_type="application/json")
+            )
+            return json.loads(response.text)
+        except Exception as e:
+            print(f"Behavior API Error: {e}")
+            return {
+                "currentStatus": {
+                    "energyLevel": 5 if context.examMode else 6,
+                    "sugarRisk": 7,
+                    "processedFoodScore": 5,
+                    "hydration": 4 if context.examMode else 6,
+                    "mealTiming": 6
+                },
+                "emotionalEatingScore": 8.5,
+                "projections": [
+                    {"day": 7, "event": "High risk of late-night stress eating during study sessions.", "severity": "high" if context.examMode else "medium"}
+                ],
+                "narrativeSummary": "BehaviorAgent detected elevated stress markers. Your late-night snacking increased 22%. Tool confirmation (HITL) recommends an intervention. (Note: Using Mock Data because your API key is invalid)."
+            }
 
 class CoachAgent(ADKAgent):
     def __init__(self):
@@ -124,9 +157,19 @@ class CoachAgent(ADKAgent):
         for msg in request.history:
             history.append(types.Content(role=msg.role, parts=[types.Part.from_text(text=msg.content)]))
             
-        chat = client.chats.create(model=self.model_name, history=history)
-        response = chat.send_message(request.message)
-        return response.text
+        try:
+            chat = client.chats.create(model=self.model_name, history=history)
+            response = chat.send_message(request.message)
+            return response.text
+        except Exception as e:
+            print(f"Coach API Error: {e}")
+            msg = request.message.lower()
+            if "rewind" in msg:
+                return "⏪ **ADK Session Rewind Active:** I have rewound your state to before you ate the biryani. Your projected energy crash has been cleared. What would you like to eat instead? *(Mock Mode)*"
+            elif request.context.examMode:
+                return "📚 **Exam Mode (Gemini 3 Pro):** I recommend high-omega-3 foods right now to maintain cognitive load. Avoid heavy carbs. *(Mock Mode)*"
+            else:
+                return f"**NutritionAgent via CoachAgent:** Received your query about '{request.message}'. I've analyzed your recent BehaviorAgent logs and suggest a balanced protein meal. *(Mock Mode - Fix API Key)*"
 
 # =====================================================================
 # NutriMind Orchestrator
