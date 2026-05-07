@@ -12,8 +12,8 @@ from slowapi.errors import RateLimitExceeded
 from functools import lru_cache
 
 # Setup Gemini Client (Real API)
-# Note: Using the key from your .env file
-API_KEY = "AQ.Ab8RN6KFOZ71Z34Fru3FO_X8N3eK39p6_gp0G4q1k9lHvRuvhA"
+# Use environment variable to prevent GitHub Secret Scanning blocks
+API_KEY = os.environ.get("GEMINI_API_KEY", "dummy_key_for_mock_mode")
 client = genai.Client(api_key=API_KEY)
 
 # Setup Rate Limiting for Security
