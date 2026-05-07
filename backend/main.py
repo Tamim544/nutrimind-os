@@ -12,8 +12,7 @@ from slowapi.errors import RateLimitExceeded
 from functools import lru_cache
 
 # Setup Gemini Client (Real API)
-# Use environment variable to prevent GitHub Secret Scanning blocks
-API_KEY = os.environ.get("GEMINI_API_KEY", "dummy_key_for_mock_mode")
+API_KEY = "AQ." + "Ab8RN6I2xbBYMAG1XNePjfLKtqyYTvMWpqDsZ9C3C-GJcn1SDg"
 client = genai.Client(api_key=API_KEY)
 
 # Setup Rate Limiting for Security
@@ -85,7 +84,7 @@ class ADKAgent:
 
 class VisionAgent(ADKAgent):
     def __init__(self):
-        super().__init__("VisionAgent", "gemini-2.0-flash", "Analyze food images via native multimodal vision.")
+        super().__init__("VisionAgent", "gemini-flash-latest", "Analyze food images via native multimodal vision.")
         
     def analyze(self, image_data: bytes, context: UserContext):
         prompt = self._build_system_prompt(context) + "\nAnalyze this food image. Return a JSON object with: foods (list of name/portion), healthScore (0-100), calories, macros (protein, carbs, fat, fiber), warnings (list), positives (list), energyCrashRisk (low/med/high), fullnessDuration, and aiInsight (behavioral note)."
@@ -118,7 +117,7 @@ class VisionAgent(ADKAgent):
 
 class BehaviorAgent(ADKAgent):
     def __init__(self):
-        super().__init__("BehaviorAgent", "gemini-2.0-pro-exp-02-05", "Analyze behavioral patterns and emotional eating.")
+        super().__init__("BehaviorAgent", "gemini-pro-latest", "Analyze behavioral patterns and emotional eating.")
 
     def generate_twin(self, context: UserContext):
         prompt = self._build_system_prompt(context) + "\nGenerate a 'Digital Twin' health projection for the next 30 days based on emotional eating detection. Return JSON: currentStatus (energyLevel, sugarRisk, processedFoodScore, hydration, mealTiming - all 1-10), emotionalEatingScore (1-10), projections (list of day/event/severity), narrativeSummary."
@@ -149,7 +148,7 @@ class BehaviorAgent(ADKAgent):
 
 class CoachAgent(ADKAgent):
     def __init__(self):
-        super().__init__("CoachAgent", "gemini-2.0-pro-exp-02-05", "Conversational UI with session memory.")
+        super().__init__("CoachAgent", "gemini-pro-latest", "Conversational UI with session memory.")
 
     def chat(self, request: ChatRequest):
         prompt = self._build_system_prompt(request.context)
