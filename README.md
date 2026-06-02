@@ -57,5 +57,3 @@ npm run dev
 ```
 *(Runs on `http://localhost:5180`)*
 
-## 📜 License
-MIT License
